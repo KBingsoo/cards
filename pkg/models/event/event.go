@@ -22,6 +22,7 @@ const (
 type Event struct {
 	Type    EventType       `json:"type"`
 	Time    time.Time       `json:"time"`
+	OrderID string          `json:"order_id"`
 	Card    models.Card     `json:"card"`
 	Context context.Context `json:"context"`
 }
