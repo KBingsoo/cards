@@ -30,11 +30,18 @@ func (c *consumer) Consume() error {
 
 func (c *consumer) handler(entry event.Event) error {
 	switch entry.Type {
-	case event.Update:
-		c.manager.Update(entry.Context, &entry.Card)
+	case event.OrderFulfill:
+		card, err := c.manager.GetByID(entry.Context, entry.Card.ID)
+		if err != nil {
+			return err
+		}
+
+		card.Qty--
+
+		return c.manager.Update(entry.Context, &card)
+
 	default:
 		return nil
 	}
 
-	return nil
 }
