@@ -9,7 +9,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/joho/godotenv v1.5.1
 	github.com/literalog/go-wise v0.0.0-20240426211954-ef74565936af
-	github.com/seosoojin/go-rabbit v0.0.0-20240625001825-8a16bc5636e7
+	github.com/seosoojin/go-rabbit v0.0.0-20240625231007-8581fc649569
 	github.com/spf13/cobra v1.8.1
 	github.com/streadway/amqp v1.1.0
 	go.mongodb.org/mongo-driver v1.15.1

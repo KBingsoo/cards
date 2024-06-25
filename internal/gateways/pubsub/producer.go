@@ -7,6 +7,7 @@ import (
 	"github.com/KBingsoo/cards/pkg/models/event"
 	"github.com/seosoojin/go-rabbit/rabbit"
 	"github.com/seosoojin/go-rabbit/rabbit/message"
+	rabbitProducer "github.com/seosoojin/go-rabbit/rabbit/producer"
 	"github.com/streadway/amqp"
 )
 
@@ -15,7 +16,7 @@ type producer struct {
 }
 
 func NewProducer(conn *amqp.Connection) (*producer, error) {
-	internalProducer, err := rabbit.NewProducer(conn)
+	internalProducer, err := rabbit.NewProducer(conn, rabbitProducer.WithProducerExchange("cards", "topic", ""))
 	if err != nil {
 		return nil, err
 	}

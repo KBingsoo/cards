@@ -2,7 +2,9 @@ package cards
 
 import (
 	"context"
+	"time"
 
+	"github.com/KBingsoo/cards/pkg/models/event"
 	"github.com/KBingsoo/entities/pkg/models"
 	"github.com/google/uuid"
 )
@@ -17,11 +19,13 @@ type Manager interface {
 
 type manager struct {
 	repository Repository
+	producer   Producer
 }
 
-func NewManager(repository Repository) *manager {
+func NewManager(repository Repository, producer Producer) *manager {
 	return &manager{
 		repository: repository,
+		producer:   producer,
 	}
 }
 
@@ -42,7 +46,20 @@ func (m *manager) GetByID(ctx context.Context, id string) (models.Card, error) {
 }
 
 func (m *manager) Update(ctx context.Context, card *models.Card) error {
-	return m.repository.Upsert(ctx, card.ID, *card)
+	msg := event.Event{
+		Type: event.Succeed,
+		Time: time.Now(),
+		Card: *card,
+	}
+
+	err := m.repository.Upsert(ctx, card.ID, *card)
+	if err != nil {
+		msg.Type = event.Error
+	}
+
+	msg.Context = ctx
+
+	return m.producer.Emit(msg)
 }
 
 func (m *manager) Delete(ctx context.Context, id string) (models.Card, error) {

@@ -4,6 +4,7 @@ import (
 	"github.com/KBingsoo/cards/internal/domain/cards"
 	"github.com/KBingsoo/cards/pkg/models/event"
 	"github.com/seosoojin/go-rabbit/rabbit"
+	rabbitConsumer "github.com/seosoojin/go-rabbit/rabbit/consumer"
 	"github.com/streadway/amqp"
 )
 
@@ -13,7 +14,7 @@ type consumer struct {
 }
 
 func NewConsumer(conn *amqp.Connection) (*consumer, error) {
-	internalConsumer, err := rabbit.NewConsumer[event.Event](conn, decode)
+	internalConsumer, err := rabbit.NewConsumer[event.Event](conn, decode, rabbitConsumer.WithConsumerExchange("cards", "topic", ""))
 	if err != nil {
 		return nil, err
 	}
