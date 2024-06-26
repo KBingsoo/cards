@@ -51,7 +51,6 @@ func (c *consumer) handler(entry event.Event) error {
 		return nil
 
 	case event.OrderRevert:
-
 		for _, card := range c.orderItems[entry.OrderID] {
 			err := c.manager.Update(entry.Context, &card)
 			if err != nil {

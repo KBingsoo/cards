@@ -28,9 +28,9 @@ func NewHandler(manager *manager) *handler {
 }
 
 func (h *handler) init() {
-	h.router.Get("/cards", h.getCards)
-	h.router.Get("/cards/{id}", h.getCard)
-	h.router.Post("/cards", h.createCard)
+	h.router.Get("/", h.getCards)
+	h.router.Get("/{id}", h.getCard)
+	h.router.Post("/", h.createCard)
 }
 
 func (h *handler) Routes() *chi.Mux {
