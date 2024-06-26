@@ -3,6 +3,7 @@ package pubsub
 import (
 	"github.com/KBingsoo/cards/internal/domain/cards"
 	"github.com/KBingsoo/cards/pkg/models/event"
+	"github.com/KBingsoo/entities/pkg/models"
 	"github.com/seosoojin/go-rabbit/rabbit"
 	rabbitConsumer "github.com/seosoojin/go-rabbit/rabbit/consumer"
 	"github.com/streadway/amqp"
@@ -11,6 +12,7 @@ import (
 type consumer struct {
 	internalConsumer rabbit.Consumer[event.Event]
 	manager          cards.Manager
+	orderItems       map[string][]models.Card
 }
 
 func NewConsumer(conn *amqp.Connection) (*consumer, error) {
@@ -36,9 +38,30 @@ func (c *consumer) handler(entry event.Event) error {
 			return err
 		}
 
+		if _, ok := c.orderItems[entry.OrderID]; !ok {
+			c.orderItems[entry.OrderID] = make([]models.Card, 0)
+		}
+
+		c.orderItems[entry.OrderID] = append(c.orderItems[entry.OrderID], card)
+
 		card.Qty--
 
-		return c.manager.Update(entry.Context, &card)
+		c.manager.Update(entry.Context, &card)
+
+		return nil
+
+	case event.OrderRevert:
+
+		for _, card := range c.orderItems[entry.OrderID] {
+			err := c.manager.Update(entry.Context, &card)
+			if err != nil {
+				return err
+			}
+		}
+
+		delete(c.orderItems, entry.OrderID)
+
+		return nil
 
 	default:
 		return nil

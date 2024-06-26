@@ -13,6 +13,7 @@ const (
 	Create       EventType = "card_create"
 	Update       EventType = "card_update"
 	OrderFulfill EventType = "card_order_fulfill"
+	OrderRevert  EventType = "card_order_revert"
 	Delete       EventType = "card_delete"
 
 	Succeed EventType = "card_succeed"
